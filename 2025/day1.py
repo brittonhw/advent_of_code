@@ -12,7 +12,7 @@ import random
 
 # rotating right is adding, left is subtraction
 def parse_rotation(rotation):
-     return int(rotation[1:]) if rotation[0] == 'R' else  0 - int(rotation[1:])
+    return int(rotation[1:]) if rotation[0] == 'R' else  0 - int(rotation[1:])
 
 def tally_lefts(rotation_list):
     position = 50
@@ -39,9 +39,12 @@ def tally_zero_pass_bys(rotation_list, verbose=False):
         if rotation_result%100 == 0:
             amount_added += 1
         zero_count += amount_added
-        #random sample for debugging output to avoid flooding
+        
+        # random sample for debugging output to avoid flooding
         if (random.random() < 0.01 or len(rotation_list) < 20) and verbose == True:
             print("inc 0 count by", amount_added, 'for rotation', rotation, 'from position', position, 'to', rotation_result)
+        
+        # set new position
         position = rotation_result % 100
     return zero_count
 
