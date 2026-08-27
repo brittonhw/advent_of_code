@@ -9,29 +9,38 @@ def is_roll(input, row, col):
     else:
         return input[row][col] == '@'
 
+
+def get_neighbor_map(roll_map):
+    neighbors_map = [[0 for col in row] for row in roll_map]
+    for row in range(len(roll_map)):
+        for col in range(len(roll_map[0])):
+            if is_roll(roll_map, row, col):
+                neighbors_map[row][col] += 1 if is_roll(roll_map, row + 1, col) else 0
+                neighbors_map[row][col] += 1 if is_roll(roll_map, row + 1, col + 1) else 0
+                neighbors_map[row][col] += 1 if is_roll(roll_map, row + 1, col - 1) else 0
+                neighbors_map[row][col] += 1 if is_roll(roll_map, row, col + 1) else 0
+                neighbors_map[row][col] += 1 if is_roll(roll_map, row, col - 1) else 0
+                neighbors_map[row][col] += 1 if is_roll(roll_map, row - 1, col) else 0
+                neighbors_map[row][col] += 1 if is_roll(roll_map, row - 1, col + 1) else 0
+                neighbors_map[row][col] += 1 if is_roll(roll_map, row - 1, col - 1) else 0
+
+    return neighbors_map
+
 def find_accessible_rolls(input):
 
     grid = [list(line) for line in input]
 
-    neighbors_map = [[0 for col in row] for row in input]
-
+    neighbors_map = get_neighbor_map(grid)
+    print(neighbors_map[0], grid[0])
     accessible_rolls = 0
     for row in range(len(grid)):
-        for col in range(len(input[0])):
-            if is_roll(input, row, col):
-                neighbors_map[row][col] += 1 if is_roll(input, row + 1, col) else 0
-                neighbors_map[row][col] += 1 if is_roll(input, row + 1, col + 1) else 0
-                neighbors_map[row][col] += 1 if is_roll(input, row + 1, col - 1) else 0
-                neighbors_map[row][col] += 1 if is_roll(input, row, col + 1) else 0
-                neighbors_map[row][col] += 1 if is_roll(input, row, col - 1) else 0
-                neighbors_map[row][col] += 1 if is_roll(input, row - 1, col) else 0
-                neighbors_map[row][col] += 1 if is_roll(input, row - 1, col + 1) else 0
-                neighbors_map[row][col] += 1 if is_roll(input, row - 1, col - 1) else 0
-
-                if neighbors_map[row][col] < 4:
-                    accessible_rolls += 1
+        for col in range(len(grid[0])):
+            if is_roll(grid, row, col) and neighbors_map[row][col] < 4:    # Note: this is checking if its a ROLL and has <4 neighbors, not if its a ROLL and has <4 neighbors
+                accessible_rolls += 1
 
     return accessible_rolls
+
+
 
 def check_removables(neighbor_map, input):
     print(neighbor_map)
@@ -53,11 +62,11 @@ def find_accessible_rolls_with_mutation(input):
         input_copy.append(added_line)
 
 
-    neighbors_map = [[0 for col in row] for row in input]
+    neighbors_map = [[0 for col in row] for row in input_copy]
 
     accessible_rolls = 0
     
-    while check_removables(neighbors_map, input):
+    while check_removables(neighbors_map, input_copy):
 
         for row in range(len(input_copy)):
             for col in range(len(input_copy[0])):
@@ -84,7 +93,7 @@ def main():
     
     print(find_accessible_rolls(input))
 
-    print(find_accessible_rolls_with_mutation(input.copy()))
+    #print(find_accessible_rolls_with_mutation(input.copy()))
     
     
 
