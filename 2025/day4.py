@@ -31,7 +31,6 @@ def find_accessible_rolls(input):
     grid = [list(line) for line in input]
 
     neighbors_map = get_neighbor_map(grid)
-    print(neighbors_map[0], grid[0])
     accessible_rolls = 0
     for row in range(len(grid)):
         for col in range(len(grid[0])):
@@ -43,7 +42,6 @@ def find_accessible_rolls(input):
 
 
 def check_removables(neighbor_map, input):
-    print(neighbor_map)
     for row in range(len(neighbor_map)):
         for col in range(len(neighbor_map[0])):
             if neighbor_map[row][col] < 4 and is_roll(input, row, col):
@@ -51,38 +49,27 @@ def check_removables(neighbor_map, input):
     
     return False
 
+def kill_removables(neighbor_map, input):
+    rolls_removed = 0
+    output = copy.deepcopy(input)
+    for row in range(len(neighbor_map)):
+        for col in range(len(neighbor_map[0])):
+            if neighbor_map[row][col] < 4 and is_roll(input, row, col):
+                output[row][col] = '.'
+                rolls_removed += 1
+    return output, rolls_removed
 
 def find_accessible_rolls_with_mutation(input):
     
-    input_copy = []
-    for line in input:
-        added_line = []
-        for item in list(line):
-            added_line.append(0) if item == '.' else added_line.append(1)
-        input_copy.append(added_line)
+    input_copy = [list(line) for line in input]
 
-
-    neighbors_map = [[0 for col in row] for row in input_copy]
-
+    neighbors_map = get_neighbor_map(input_copy)
     accessible_rolls = 0
     
     while check_removables(neighbors_map, input_copy):
-
-        for row in range(len(input_copy)):
-            for col in range(len(input_copy[0])):
-                if is_roll(input_copy, row, col):
-                    neighbors_map[row][col] += 1 if is_roll(input_copy, row + 1, col) else 0
-                    neighbors_map[row][col] += 1 if is_roll(input_copy, row + 1, col + 1) else 0
-                    neighbors_map[row][col] += 1 if is_roll(input_copy, row + 1, col - 1) else 0
-                    neighbors_map[row][col] += 1 if is_roll(input_copy, row, col + 1) else 0
-                    neighbors_map[row][col] += 1 if is_roll(input_copy, row, col - 1) else 0
-                    neighbors_map[row][col] += 1 if is_roll(input_copy, row - 1, col) else 0
-                    neighbors_map[row][col] += 1 if is_roll(input_copy, row - 1, col + 1) else 0
-                    neighbors_map[row][col] += 1 if is_roll(input_copy, row - 1, col - 1) else 0
-
-                    if neighbors_map[row][col] < 4:
-                        accessible_rolls += 1
-                        input_copy[row][col] = '.'
+        input_copy, rolls_removed = kill_removables(neighbors_map, input_copy)
+        accessible_rolls += rolls_removed
+        neighbors_map = get_neighbor_map(input_copy)
 
     return accessible_rolls
     
@@ -93,7 +80,7 @@ def main():
     
     print(find_accessible_rolls(input))
 
-    #print(find_accessible_rolls_with_mutation(input.copy()))
+    print(find_accessible_rolls_with_mutation(input.copy()))
     
     
 
