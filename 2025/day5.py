@@ -16,6 +16,20 @@ def check_id(id, ranges):
     return False 
 
 
+def build_non_overlap_ranges(ranges):
+    cannonical_ranges = [ranges[0]] # this variable will be ranges without overlaps
+
+    for id_range in ranges: # first range should just be total overlap here
+        for range_candidate in cannonical_ranges:
+            # if overlapping adjust window
+            if id_range[0] <= range_candidate[1] and id_range[1] >= range_candidate[0]:
+                range_candidate[0] = min(id_range[0], range_candidate[0])
+                range_candidate[1] = max(id_range[1], range_candidate[1])
+                
+
+
+
+
 if __name__ == "__main__":
     input = []
     with open("day5/input.txt") as f:
